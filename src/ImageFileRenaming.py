@@ -1,9 +1,11 @@
-'''
+"""
 A set of tools for renaming image files based on when the image was captured.
 
 @author: Jason A Smith
 
-'''
+@var PROMPT: Whether or not to ask before renaming a file
+@type PROMPT: bool
+"""
 import os
 import shutil
 import sys
@@ -14,6 +16,8 @@ from PIL import Image
 
 DATE_TIME_ORIGINAL_KEY = 36867
 DATE_TIME_ORIGINAL_FORMAT = '%Y:%m:%d %H:%M:%S'
+
+PROMPT = True
 
 def get_date_taken(path):
     """Get the timestamp representing when the image was taken.
@@ -99,7 +103,16 @@ def rename_images_by_date_taken(path):
 
             print(image_file + ' -> ' + new_image_file)
 
-            shutil.move(image_file, new_image_file)
+            if PROMPT:
+                response = input('Rename [y]? ').lower()
+                should_rename = response in ('', 'y', 'yes')
+            else:
+                should_rename = True
+
+            if should_rename:
+                shutil.move(image_file, new_image_file)
+            else:
+                continue
         else:
             print('no date taken information available for ' + image_file)
 
